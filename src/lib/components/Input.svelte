@@ -167,9 +167,9 @@
 
 <style>
   .input-form {
-    padding: 1.5rem;
+    padding: 1rem;
     background: white;
-    border-radius: 20px;
+    border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     border: 1px solid #f1f3f5;
   }
@@ -183,7 +183,7 @@
   }
 
   .field {
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.75rem;
   }
 
   label,
@@ -202,11 +202,11 @@
   input[type="text"],
   select {
     width: 100%;
-    padding: 0.8rem 1rem;
+    padding: 0.6rem 0.8rem;
     border: 2px solid #edf2f4;
-    border-radius: 12px;
+    border-radius: 10px;
     box-sizing: border-box;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-family: inherit;
     transition: all 0.3s;
     background: #f8f9fa;
@@ -231,17 +231,17 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0.75rem;
+    padding: 0.5rem;
     background: #f8f9fa;
     border: 2px solid #edf2f4;
-    border-radius: 12px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s;
     color: #2b2d42;
     font-weight: 500;
     text-transform: none;
     letter-spacing: normal;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     margin-bottom: 0;
   }
 

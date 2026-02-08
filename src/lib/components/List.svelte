@@ -112,13 +112,13 @@
   .list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.6rem;
   }
 
   .item {
     background: white;
-    border-radius: 18px;
-    padding: 1.25rem;
+    border-radius: 14px;
+    padding: 0.8rem 1rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
     border: 1px solid #f1f3f5;
     transition: transform 0.2s;
@@ -131,8 +131,8 @@
   .item-header {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
   }
 
   .date {
@@ -164,7 +164,7 @@
   .amount {
     margin-left: auto;
     font-weight: 700;
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     color: #2b2d42;
   }
 
@@ -173,33 +173,33 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: #2b2d42;
     font-weight: 500;
   }
 
   .payment {
     color: #8d99ae;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
 
   .accrued {
     background: #fff0f6;
     color: #f72585;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    padding: 0.1rem 0.5rem;
+    padding: 0.1rem 0.4rem;
     border-radius: 6px;
     border: 1px solid #ffdeeb;
   }
 
   .item-memo {
-    margin-top: 0.75rem;
-    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
     color: #4a4e69;
     background: #f8f9fa;
-    padding: 0.6rem 0.8rem;
-    border-radius: 10px;
+    padding: 0.4rem 0.6rem;
+    border-radius: 8px;
     line-height: 1.4;
   }
 
@@ -207,8 +207,8 @@
     display: flex;
     justify-content: flex-end;
     gap: 1.25rem;
-    margin-top: 1rem;
-    padding-top: 0.75rem;
+    margin-top: 0.6rem;
+    padding-top: 0.5rem;
     border-top: 1px solid #f8f9fa;
   }
 
