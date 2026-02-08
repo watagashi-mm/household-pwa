@@ -1,11 +1,13 @@
 <script lang="ts">
   import { getAllTransactions, clearAllTransactions } from "../db/indexeddb";
+  import { TEXTS } from "../constants/texts";
 
+  /** データをCSVとしてダウンロード */
   async function downloadCSV() {
     const transactions = await getAllTransactions();
 
     if (transactions.length === 0) {
-      alert("出力するデータがありません");
+      alert(TEXTS.EXPORT.EMPTY_MESSAGE || TEXTS.LIST.EMPTY_MESSAGE);
       return;
     }
 
@@ -37,34 +39,35 @@
     document.body.removeChild(link);
   }
 
+  /** 全データのリセット */
   async function handleReset() {
-    if (
-      confirm(
-        "全てのデータを削除してリセットしますか？この操作は取り消せません。",
-      )
-    ) {
+    if (confirm(TEXTS.EXPORT.CONFIRM_CLEAR)) {
       await clearAllTransactions();
-      alert("データをリセットしました");
-      location.reload(); // 状態を簡易的にリセットするためにリロード
+      alert(TEXTS.EXPORT.CLEAR_SUCCESS);
+      location.reload();
     }
   }
 </script>
 
 <div class="export-container">
-  <h2>CSV出力・設定</h2>
+  <h2>{TEXTS.EXPORT.TITLE}</h2>
 
   <div class="card">
-    <h3>CSV出力</h3>
+    <h3>{TEXTS.EXPORT.TITLE}</h3>
     <p>
       現在保存されているデータをCSV形式でダウンロードします。PC版システムへの取り込みに使用してください。
     </p>
-    <button class="primary" on:click={downloadCSV}>CSVを出力する</button>
+    <button class="primary" on:click={downloadCSV}
+      >{TEXTS.EXPORT.BTN_EXPORT}</button
+    >
   </div>
 
   <div class="card warning">
-    <h3>データリセット</h3>
+    <h3>{TEXTS.EXPORT.BTN_CLEAR}</h3>
     <p>端末内の全てのデータを削除します。CSV出力後に実行してください。</p>
-    <button class="danger" on:click={handleReset}>データをリセットする</button>
+    <button class="danger" on:click={handleReset}
+      >{TEXTS.EXPORT.BTN_CLEAR}</button
+    >
   </div>
 </div>
 

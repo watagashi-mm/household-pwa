@@ -7,7 +7,9 @@
     type Transaction,
   } from "../constants/masters";
   import { addTransaction, updateTransaction } from "../db/indexeddb";
+  import { TEXTS } from "../constants/texts";
 
+  /** 取引データの編集対象（新規の場合はnull） */
   export let transaction: Transaction | null = null;
 
   const dispatch = createEventDispatcher();
@@ -93,7 +95,7 @@
 
   async function handleSubmit() {
     if (!amount) {
-      alert("金額を入力してください");
+      alert(TEXTS.INPUT.ALERT_AMOUNT_REQUIRED);
       return;
     }
 
@@ -141,15 +143,15 @@
 </script>
 
 <div class="input-form">
-  <h2>{transaction ? "データ編集" : "データ登録"}</h2>
+  <h2>{transaction ? TEXTS.INPUT.TITLE_EDIT : TEXTS.INPUT.TITLE_ADD}</h2>
 
   <div class="field">
-    <label for="ymd">日付</label>
+    <label for="ymd">{TEXTS.INPUT.FIELD_DATE}</label>
     <input type="date" id="ymd" bind:value={ymd} />
   </div>
 
   <div class="field">
-    <span class="label">収支区分</span>
+    <span class="label">{TEXTS.INPUT.FIELD_BOP}</span>
     <div class="radio-group">
       {#each BOP_MASTER as bop}
         <label>
@@ -162,7 +164,7 @@
 
   <div class="field">
     <div class="label-row">
-      <label for="cat">カテゴリ</label>
+      <label for="cat">{TEXTS.INPUT.FIELD_CATEGORY}</label>
       <div class="shortcuts">
         {#each frequentCategories as fcat}
           <button
@@ -183,7 +185,7 @@
   </div>
 
   <div class="field">
-    <label for="pmt">支払い方法</label>
+    <label for="pmt">{TEXTS.INPUT.FIELD_PAYMENT}</label>
     <select id="pmt" bind:value={pmtCd}>
       {#each PAYMENT_MASTER[bopCd] as pmt}
         <option value={pmt.code}>{pmt.name}</option>
@@ -192,34 +194,41 @@
   </div>
 
   <div class="field">
-    <label for="amount">金額</label>
+    <label for="amount">{TEXTS.INPUT.FIELD_AMOUNT}</label>
     <input
       type="number"
       id="amount"
       bind:value={amount}
-      placeholder="金額を入力"
+      placeholder={TEXTS.INPUT.FIELD_AMOUNT_PLACEHOLDER}
       inputmode="numeric"
     />
   </div>
 
   <div class="field">
-    <label for="memo">メモ</label>
-    <input type="text" id="memo" bind:value={memo} placeholder="メモを入力" />
+    <label for="memo">{TEXTS.INPUT.FIELD_MEMO}</label>
+    <input
+      type="text"
+      id="memo"
+      bind:value={memo}
+      placeholder={TEXTS.INPUT.FIELD_MEMO_PLACEHOLDER}
+    />
   </div>
 
   <div class="field checkbox-field">
     <label>
       <input type="checkbox" bind:checked={accruedFlg} />
-      未払いフラグ
+      {TEXTS.INPUT.FIELD_ACCRUED}
     </label>
   </div>
 
   <div class="actions">
     <button class="primary" on:click={handleSubmit}
-      >{transaction ? "更新" : "登録"}</button
+      >{transaction ? TEXTS.INPUT.BTN_UPDATE : TEXTS.INPUT.BTN_SUBMIT}</button
     >
     {#if transaction}
-      <button class="secondary" on:click={handleCancel}>キャンセル</button>
+      <button class="secondary" on:click={handleCancel}
+        >{TEXTS.INPUT.BTN_CANCEL}</button
+      >
     {/if}
   </div>
 </div>

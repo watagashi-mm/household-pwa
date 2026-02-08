@@ -3,6 +3,7 @@
   import List from "./lib/components/List.svelte";
   import Export from "./lib/components/Export.svelte";
   import type { Transaction } from "./lib/constants/masters";
+  import { TEXTS } from "./lib/constants/texts";
 
   let currentTab = "input";
   let editingTransaction: Transaction | null = null;
@@ -12,6 +13,10 @@
 
   const tabs = ["input", "list", "export"];
 
+  /**
+   * トーストメッセージを表示
+   * @param {string} message
+   */
   function showToast(message: string) {
     toastMessage = message;
     toastVisible = true;
@@ -20,15 +25,22 @@
     }, 2000);
   }
 
+  /**
+   * 編集対象の取引データをセットし、入力タブへ切り替え
+   * @param {CustomEvent<Transaction>} event
+   */
   function handleEdit(event: CustomEvent<Transaction>) {
     editingTransaction = event.detail;
     currentTab = "input";
   }
 
+  /**
+   * データの保存成功時のハンドラ
+   */
   function handleSave() {
     if (editingTransaction === null) {
       // 新規登録時は「入力」タブのままトーストを表示
-      showToast("保存しました");
+      showToast(TEXTS.COMMON.SAVE_SUCCESS);
       if (listComponent) {
         listComponent.loadTransactions();
       }
@@ -42,11 +54,18 @@
     }
   }
 
+  /**
+   * キャンセル時のハンドラ
+   */
   function handleCancel() {
     editingTransaction = null;
     currentTab = "list";
   }
 
+  /**
+   * タブの切り替え処理
+   * @param {string} tab
+   */
   function switchTab(tab: string) {
     currentTab = tab;
     if (tab === "input") {
@@ -56,10 +75,19 @@
 
   // スワイプ管理
   let touchStartX = 0;
+
+  /**
+   * タッチ開始時の座標を記録
+   * @param {TouchEvent} e
+   */
   function handleTouchStart(e: TouchEvent) {
     touchStartX = e.touches[0].clientX;
   }
 
+  /**
+   * タッチ終了時の座標からスワイプ方向を判定し、タブを切り替え
+   * @param {TouchEvent} e
+   */
   function handleTouchEnd(e: TouchEvent) {
     const touchEndX = e.changedTouches[0].clientX;
     const diff = touchEndX - touchStartX;
@@ -77,21 +105,21 @@
 
 <main on:touchstart={handleTouchStart} on:touchend={handleTouchEnd}>
   <header>
-    <h1>家計簿スマホ入力</h1>
+    <h1>{TEXTS.APP.TITLE}</h1>
   </header>
 
   <nav class="tabs">
     <button
       class:active={currentTab === "input"}
-      on:click={() => switchTab("input")}>入力</button
+      on:click={() => switchTab("input")}>{TEXTS.APP.TABS.INPUT}</button
     >
     <button
       class:active={currentTab === "list"}
-      on:click={() => switchTab("list")}>一覧</button
+      on:click={() => switchTab("list")}>{TEXTS.APP.TABS.LIST}</button
     >
     <button
       class:active={currentTab === "export"}
-      on:click={() => switchTab("export")}>出力</button
+      on:click={() => switchTab("export")}>{TEXTS.APP.TABS.EXPORT}</button
     >
   </nav>
 

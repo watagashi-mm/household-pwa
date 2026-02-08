@@ -1,8 +1,14 @@
+/**
+ * 収支区分マスタ
+ */
 export const BOP_MASTER = [
     { code: 1, name: "収入" },
     { code: 2, name: "支出" }
 ];
 
+/**
+ * カテゴリマスタ（収支区分ごと）
+ */
 export const CATEGORY_MASTER: Record<number, { code: number, name: string }[]> = {
     1: [ // 収入
         { code: 1, name: "給与" },
@@ -30,6 +36,9 @@ export const CATEGORY_MASTER: Record<number, { code: number, name: string }[]> =
     ]
 };
 
+/**
+ * 支払い方法マスタ（収支区分ごと）
+ */
 export const PAYMENT_MASTER: Record<number, { code: number, name: string }[]> = {
     1: [ // 収入
         { code: 1, name: "振込（みずほ）" }
@@ -45,13 +54,16 @@ export const PAYMENT_MASTER: Record<number, { code: number, name: string }[]> = 
     ]
 };
 
+/**
+ * 取引データインターフェース
+ */
 export interface Transaction {
     id?: number;
-    ymd: number;           // YYYYMMDD
-    bopCd: number;         // 1:収入 2:支出
-    catCd: number;
-    memo: string;
-    pmtCd: number;
-    amount: number;
-    accruedFlg: number;    // 0 or 1
+    ymd: number;           // 年月日 (YYYYMMDD)
+    bopCd: number;         // 収支区分コード (1:収入 2:支出)
+    catCd: number;         // カテゴリコード
+    memo: string;          // メモ
+    pmtCd: number;         // 支払い方法コード
+    amount: number;        // 金額
+    accruedFlg: number;    // 未払いフラグ (0:通常 1:未払い)
 }

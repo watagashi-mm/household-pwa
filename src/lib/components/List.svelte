@@ -7,6 +7,7 @@
     type Transaction,
   } from "../constants/masters";
   import { getAllTransactions, deleteTransaction } from "../db/indexeddb";
+  import { TEXTS } from "../constants/texts";
 
   const dispatch = createEventDispatcher();
 
@@ -16,45 +17,72 @@
     await loadTransactions();
   });
 
+  /** 取引データをDBから再読み込み */
   export async function loadTransactions() {
     transactions = await getAllTransactions();
   }
 
+  /**
+   * 収支区分名を取得
+   * @param {number} cd
+   */
   function getBopName(cd: number) {
     return BOP_MASTER.find((m) => m.code === cd)?.name || "";
   }
 
+  /**
+   * カテゴリ名を取得
+   * @param {number} bopCd
+   * @param {number} catCd
+   */
   function getCatName(bopCd: number, catCd: number) {
     return CATEGORY_MASTER[bopCd]?.find((m) => m.code === catCd)?.name || "";
   }
 
+  /**
+   * 支払い方法名を取得
+   * @param {number} bopCd
+   * @param {number} pmtCd
+   */
   function getPmtName(bopCd: number, pmtCd: number) {
     return PAYMENT_MASTER[bopCd]?.find((m) => m.code === pmtCd)?.name || "";
   }
 
+  /**
+   * 日付をMM/DD形式でフォーマット
+   * @param {number} ymd
+   */
   function formatDate(ymd: number) {
     const s = ymd.toString();
     return `${s.substring(4, 6)}/${s.substring(6, 8)}`;
   }
 
+  /**
+   * 指定したIDのデータを削除
+   * @param {number | undefined} id
+   */
   async function handleDelete(id: number | undefined) {
     if (!id) return;
-    if (confirm("削除しますか？")) {
+    if (confirm(TEXTS.LIST.CONFIRM_DELETE)) {
       await deleteTransaction(id);
       await loadTransactions();
     }
   }
 
+  /**
+   * 編集イベントを発行
+   * @param {Transaction} tx
+   */
   function handleEdit(tx: Transaction) {
     dispatch("edit", tx);
   }
 </script>
 
 <div class="list-container">
-  <h2>データ一覧</h2>
+  <h2>{TEXTS.LIST.TITLE}</h2>
 
   {#if transactions.length === 0}
-    <p class="empty">データがありません</p>
+    <p class="empty">{TEXTS.LIST.EMPTY_MESSAGE}</p>
   {:else}
     <div class="list">
       {#each transactions as tx}
@@ -70,7 +98,7 @@
             <span class="category">{getCatName(tx.bopCd, tx.catCd)}</span>
             <span class="payment">({getPmtName(tx.bopCd, tx.pmtCd)})</span>
             {#if tx.accruedFlg === 1}
-              <span class="accrued">未払い</span>
+              <span class="accrued">{TEXTS.LIST.ACCRUED_LABEL}</span>
             {/if}
           </div>
           {#if tx.memo}
@@ -78,10 +106,10 @@
           {/if}
           <div class="item-actions">
             <button class="edit-btn" on:click={() => handleEdit(tx)}
-              >編集</button
+              >{TEXTS.LIST.BTN_EDIT}</button
             >
             <button class="delete-btn" on:click={() => handleDelete(tx.id)}
-              >削除</button
+              >{TEXTS.LIST.BTN_DELETE}</button
             >
           </div>
         </div>
