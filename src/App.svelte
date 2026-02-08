@@ -7,6 +7,18 @@
   let currentTab = "input";
   let editingTransaction: Transaction | null = null;
   let listComponent: List;
+  let toastMessage = "";
+  let toastVisible = false;
+
+  const tabs = ["input", "list", "export"];
+
+  function showToast(message: string) {
+    toastMessage = message;
+    toastVisible = true;
+    setTimeout(() => {
+      toastVisible = false;
+    }, 2000);
+  }
 
   function handleEdit(event: CustomEvent<Transaction>) {
     editingTransaction = event.detail;
@@ -14,10 +26,19 @@
   }
 
   function handleSave() {
-    editingTransaction = null;
-    currentTab = "list";
-    if (listComponent) {
-      listComponent.loadTransactions();
+    if (editingTransaction === null) {
+      // 新規登録時は「入力」タブのままトーストを表示
+      showToast("保存しました");
+      if (listComponent) {
+        listComponent.loadTransactions();
+      }
+    } else {
+      // 編集時は「一覧」へ戻る
+      editingTransaction = null;
+      currentTab = "list";
+      if (listComponent) {
+        listComponent.loadTransactions();
+      }
     }
   }
 
@@ -32,9 +53,29 @@
       editingTransaction = null;
     }
   }
+
+  // スワイプ管理
+  let touchStartX = 0;
+  function handleTouchStart(e: TouchEvent) {
+    touchStartX = e.touches[0].clientX;
+  }
+
+  function handleTouchEnd(e: TouchEvent) {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchEndX - touchStartX;
+    if (Math.abs(diff) > 100) {
+      // 100px以上のスワイプで切り替え
+      const currentIndex = tabs.indexOf(currentTab);
+      if (diff > 0 && currentIndex > 0) {
+        switchTab(tabs[currentIndex - 1]);
+      } else if (diff < 0 && currentIndex < tabs.length - 1) {
+        switchTab(tabs[currentIndex + 1]);
+      }
+    }
+  }
 </script>
 
-<main>
+<main on:touchstart={handleTouchStart} on:touchend={handleTouchEnd}>
   <header>
     <h1>家計簿スマホ入力</h1>
   </header>
@@ -67,6 +108,12 @@
       <Export />
     {/if}
   </div>
+
+  {#if toastVisible}
+    <div class="toast">
+      {toastMessage}
+    </div>
+  {/if}
 </main>
 
 <style>
@@ -140,5 +187,31 @@
     overflow-y: auto;
     padding: 2rem 1rem;
     padding-bottom: 4rem;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    z-index: 1000;
+    animation: fadeInUp 0.3s ease;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translate(-50%, 10px);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
   }
 </style>

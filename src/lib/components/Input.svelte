@@ -21,6 +21,8 @@
   let accruedFlg = false;
 
   // 初期化
+  let frequentCategories: { code: number; name: string }[] = [];
+
   onMount(() => {
     if (transaction) {
       const s = transaction.ymd.toString();
@@ -34,14 +36,53 @@
     } else {
       const now = new Date();
       ymd = now.toISOString().split("T")[0];
-      resetSelectors();
+
+      // localStorageから直近の設定を読み込み
+      const lastBop = localStorage.getItem("lastBop");
+      const lastPmt = localStorage.getItem("lastPmt");
+      const lastCat = localStorage.getItem("lastCat");
+
+      if (lastBop) bopCd = parseInt(lastBop);
+      if (lastPmt) pmtCd = parseInt(lastPmt);
+      if (lastCat) catCd = parseInt(lastCat);
+
+      if (!lastBop) resetSelectors();
     }
+    updateFrequentCategories();
   });
+
+  function updateFrequentCategories() {
+    const statsStr = localStorage.getItem(`catStats_${bopCd}`);
+    if (statsStr) {
+      const stats = JSON.parse(statsStr);
+      // カウント順にソートして上位3件
+      const topCodes = Object.entries(stats)
+        .sort((a: any, b: any) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([code]) => parseInt(code));
+
+      frequentCategories = CATEGORY_MASTER[bopCd].filter((c) =>
+        topCodes.includes(c.code),
+      );
+    } else {
+      frequentCategories = [];
+    }
+  }
 
   // 収支区分が変わったらカテゴリと支払い方法をリセット
   $: if (bopCd) {
     if (!transaction || bopCd !== transaction.bopCd) {
-      resetSelectors();
+      // 収支区分が変わったときは直近の保存値があればそれを使う
+      const lastCat = localStorage.getItem(`lastCat_${bopCd}`);
+      const lastPmt = localStorage.getItem(`lastPmt_${bopCd}`);
+
+      if (lastCat) catCd = parseInt(lastCat);
+      else catCd = CATEGORY_MASTER[bopCd][0]?.code || 0;
+
+      if (lastPmt) pmtCd = parseInt(lastPmt);
+      else pmtCd = PAYMENT_MASTER[bopCd][0]?.code || 0;
+
+      updateFrequentCategories();
     }
   }
 
@@ -71,21 +112,26 @@
       await updateTransaction(data);
     } else {
       await addTransaction(data);
+      // localStorageに直近の設定と統計を保存
+      localStorage.setItem("lastBop", bopCd.toString());
+      localStorage.setItem(`lastCat_${bopCd}`, catCd.toString());
+      localStorage.setItem(`lastPmt_${bopCd}`, pmtCd.toString());
+
+      const statsStr = localStorage.getItem(`catStats_${bopCd}`) || "{}";
+      const stats = JSON.parse(statsStr);
+      stats[catCd] = (stats[catCd] || 0) + 1;
+      localStorage.setItem(`catStats_${bopCd}`, JSON.stringify(stats));
     }
 
     dispatch("save");
     resetForm();
+    updateFrequentCategories();
   }
 
   function resetForm() {
     if (!transaction) {
-      const now = new Date();
-      ymd = now.toISOString().split("T")[0];
-      bopCd = 2;
+      // 連続入力のため「金額」のみをクリア
       amount = null;
-      memo = "";
-      accruedFlg = false;
-      resetSelectors();
     }
   }
 
@@ -115,7 +161,20 @@
   </div>
 
   <div class="field">
-    <label for="cat">カテゴリ</label>
+    <div class="label-row">
+      <label for="cat">カテゴリ</label>
+      <div class="shortcuts">
+        {#each frequentCategories as fcat}
+          <button
+            class="chip"
+            class:active={catCd === fcat.code}
+            on:click={() => (catCd = fcat.code)}
+          >
+            {fcat.name}
+          </button>
+        {/each}
+      </div>
+    </div>
     <select id="cat" bind:value={catCd}>
       {#each CATEGORY_MASTER[bopCd] as cat}
         <option value={cat.code}>{cat.name}</option>
@@ -190,11 +249,46 @@
   .label {
     display: block;
     font-weight: 600;
-    margin-bottom: 0.5rem;
-    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+    font-size: 0.8rem;
     color: #8d99ae;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+  }
+
+  .label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+  }
+
+  .label-row label {
+    margin-bottom: 0;
+  }
+
+  .shortcuts {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .chip {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.7rem;
+    border-radius: 6px;
+    background: #f1f3f5;
+    color: #8d99ae;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: none;
+    width: auto;
+  }
+
+  .chip.active {
+    background: #e0e7ff;
+    color: #4361ee;
   }
 
   input[type="date"],
