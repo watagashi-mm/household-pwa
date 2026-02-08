@@ -1,0 +1,9 @@
+{
+  "name": "家計簿PWA",
+  "short_name": "家計簿",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2196f3",
+  "icons": []
+}
