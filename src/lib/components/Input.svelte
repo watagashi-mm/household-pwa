@@ -236,17 +236,17 @@
 <style>
   .input-form {
     padding: 1rem;
-    background: white;
+    background: var(--bg-card);
     border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid #f1f3f5;
+    box-shadow: var(--shadow-large);
+    border: 1px solid var(--border-color);
   }
 
   h2 {
     margin-top: 0;
     font-size: 1.3rem;
     font-weight: 600;
-    color: #2b2d42;
+    color: var(--text-main);
     margin-bottom: 1.5rem;
   }
 
@@ -260,7 +260,7 @@
     font-weight: 600;
     margin-bottom: 0.25rem;
     font-size: 0.8rem;
-    color: #8d99ae;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -285,8 +285,8 @@
     padding: 0.2rem 0.5rem;
     font-size: 0.7rem;
     border-radius: 6px;
-    background: #f1f3f5;
-    color: #8d99ae;
+    background: var(--bg-input);
+    color: var(--text-muted);
     border: none;
     font-weight: 600;
     cursor: pointer;
@@ -306,20 +306,21 @@
   select {
     width: 100%;
     padding: 0.6rem 0.8rem;
-    border: 2px solid #edf2f4;
+    border: 2px solid var(--border-input);
     border-radius: 10px;
     box-sizing: border-box;
     font-size: 0.95rem;
     font-family: inherit;
     transition: all 0.3s;
-    background: #f8f9fa;
+    background: var(--bg-input);
+    color: var(--text-main);
   }
 
   input:focus,
   select:focus {
     outline: none;
-    border-color: #4361ee;
-    background: white;
+    border-color: var(--primary);
+    background: var(--bg-card);
     box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
   }
 
@@ -335,12 +336,12 @@
     align-items: center;
     justify-content: center;
     padding: 0.5rem;
-    background: #f8f9fa;
-    border: 2px solid #edf2f4;
+    background: var(--bg-input);
+    border: 2px solid var(--border-input);
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s;
-    color: #2b2d42;
+    color: var(--text-main);
     font-weight: 500;
     text-transform: none;
     letter-spacing: normal;
@@ -353,9 +354,9 @@
   }
 
   .radio-group label:has(input:checked) {
-    background: white;
-    border-color: #4361ee;
-    color: #4361ee;
+    background: var(--bg-card);
+    border-color: var(--primary);
+    color: var(--primary);
     box-shadow: 0 4px 10px rgba(67, 97, 238, 0.1);
   }
 
@@ -364,7 +365,7 @@
     align-items: center;
     gap: 0.75rem;
     font-weight: 500;
-    color: #2b2d42;
+    color: var(--text-main);
     text-transform: none;
     letter-spacing: normal;
     cursor: pointer;
@@ -373,7 +374,7 @@
   .checkbox-field input {
     width: 20px;
     height: 20px;
-    accent-color: #4361ee;
+    accent-color: var(--primary);
   }
 
   .actions {
@@ -394,14 +395,14 @@
   }
 
   .primary {
-    background: #4361ee;
-    color: white;
+    background: var(--primary);
+    color: var(--text-white);
     box-shadow: 0 4px 12px rgba(67, 97, 238, 0.25);
   }
 
   .secondary {
-    background: #edf2f4;
-    color: #8d99ae;
+    background: var(--border-input);
+    color: var(--text-muted);
   }
 
   button:active {

@@ -82,10 +82,10 @@
   }
 
   .card {
-    background: white;
+    background: var(--bg-card);
     padding: 1rem;
     border-radius: 8px;
-    border: 1px solid #eee;
+    border: 1px solid var(--border-color);
     margin-bottom: 1.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
@@ -97,7 +97,7 @@
 
   p {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-muted);
     margin-bottom: 1rem;
     line-height: 1.4;
   }

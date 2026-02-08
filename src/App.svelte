@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import Input from "./lib/components/Input.svelte";
   import List from "./lib/components/List.svelte";
   import Export from "./lib/components/Export.svelte";
@@ -12,6 +13,41 @@
   let toastVisible = false;
 
   const tabs = ["input", "list", "export"];
+
+  // ダークモード管理
+  let isDarkMode = false;
+
+  onMount(() => {
+    // 保存されたテーマまたはシステム設定を読み込み
+    const savedTheme = localStorage.getItem("theme");
+    const systemPrefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+
+    if (savedTheme === "dark" || (!savedTheme && systemPrefersDark)) {
+      isDarkMode = true;
+      document.documentElement.classList.add("dark");
+    } else {
+      isDarkMode = false;
+      document.documentElement.classList.remove("dark");
+    }
+  });
+
+  /**
+   * テーマの切り替え
+   */
+  function toggleTheme() {
+    isDarkMode = !isDarkMode;
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
+      localStorage.setItem("theme", "light");
+    }
+  }
 
   /**
    * トーストメッセージを表示
@@ -105,7 +141,44 @@
 
 <main on:touchstart={handleTouchStart} on:touchend={handleTouchEnd}>
   <header>
-    <h1>{TEXTS.APP.TITLE}</h1>
+    <div class="header-content">
+      <h1>{TEXTS.APP.TITLE}</h1>
+      <button
+        class="theme-toggle"
+        on:click={toggleTheme}
+        aria-label="Toggle theme"
+      >
+        {#if isDarkMode}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            ><circle cx="12" cy="12" r="5" /><path
+              d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+            /></svg
+          >
+        {:else}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            ><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg
+          >
+        {/if}
+      </button>
+    </div>
   </header>
 
   <nav class="tabs">
@@ -148,9 +221,12 @@
   :global(body) {
     margin: 0;
     font-family: "Outfit", sans-serif;
-    background-color: #f8f9fa;
-    color: #2b2d42;
+    background-color: var(--bg-main);
+    color: var(--text-main);
     -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color 0.3s,
+      color 0.3s;
   }
 
   main {
@@ -159,33 +235,61 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: white;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-large);
   }
 
   header {
-    background: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
-    color: white;
-    padding: 1.5rem 1rem;
-    text-align: center;
+    background: linear-gradient(
+      135deg,
+      var(--primary) 0%,
+      var(--primary-dark) 100%
+    );
+    color: var(--text-white);
+    padding: 1rem;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
   }
 
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+  }
+
+  .theme-toggle {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .theme-toggle:active {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
   h1 {
     margin: 0;
-    font-size: 1.4rem;
+    font-size: 1.25rem;
     font-weight: 600;
     letter-spacing: -0.02em;
   }
 
   .tabs {
     display: flex;
-    background: white;
+    background: var(--bg-card);
     margin: -15px 1rem 0;
     padding: 0.5rem;
     border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow);
     position: sticky;
     top: 10px;
     z-index: 10;
@@ -198,15 +302,15 @@
     background: none;
     font-size: 0.95rem;
     font-weight: 500;
-    color: #8d99ae;
+    color: var(--text-muted);
     cursor: pointer;
     border-radius: 10px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .tabs button.active {
-    background: #4361ee;
-    color: white;
+    background: var(--primary);
+    color: var(--text-white);
     box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
   }
 

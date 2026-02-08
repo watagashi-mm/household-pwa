@@ -127,7 +127,7 @@
     margin: 0 0 1.5rem 0.5rem;
     font-size: 1.3rem;
     font-weight: 600;
-    color: #2b2d42;
+    color: var(--text-main);
   }
 
   .empty {
@@ -144,11 +144,11 @@
   }
 
   .item {
-    background: white;
+    background: var(--bg-card);
     border-radius: 14px;
     padding: 0.8rem 1rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-    border: 1px solid #f1f3f5;
+    border: 1px solid var(--border-color);
     transition: transform 0.2s;
   }
 
@@ -166,8 +166,8 @@
   .date {
     font-weight: 600;
     font-size: 0.85rem;
-    color: #8d99ae;
-    background: #f8f9fa;
+    color: var(--text-muted);
+    background: var(--bg-input);
     padding: 0.2rem 0.6rem;
     border-radius: 8px;
   }
@@ -193,7 +193,7 @@
     margin-left: auto;
     font-weight: 700;
     font-size: 1.15rem;
-    color: #2b2d42;
+    color: var(--text-main);
   }
 
   .item-body {
@@ -202,7 +202,7 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.9rem;
-    color: #2b2d42;
+    color: var(--text-main);
     font-weight: 500;
   }
 
@@ -224,8 +224,8 @@
   .item-memo {
     margin-top: 0.5rem;
     font-size: 0.85rem;
-    color: #4a4e69;
-    background: #f8f9fa;
+    color: var(--text-muted);
+    background: var(--bg-input);
     padding: 0.4rem 0.6rem;
     border-radius: 8px;
     line-height: 1.4;
