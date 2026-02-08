@@ -167,27 +167,34 @@
 
 <style>
   .input-form {
-    padding: 1rem;
-    background: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f3f5;
   }
 
   h2 {
     margin-top: 0;
-    font-size: 1.25rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2b2d42;
+    margin-bottom: 1.5rem;
   }
 
   .field {
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
   }
 
   label,
   .label {
     display: block;
-    font-weight: bold;
-    margin-bottom: 0.25rem;
-    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: #8d99ae;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   input[type="date"],
@@ -195,62 +202,107 @@
   input[type="text"],
   select {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 0.8rem 1rem;
+    border: 2px solid #edf2f4;
+    border-radius: 12px;
     box-sizing: border-box;
     font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s;
+    background: #f8f9fa;
+  }
+
+  input:focus,
+  select:focus {
+    outline: none;
+    border-color: #4361ee;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
   }
 
   .radio-group {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
   }
 
   .radio-group label {
+    flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.25rem;
-    font-weight: normal;
+    justify-content: center;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border: 2px solid #edf2f4;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: #2b2d42;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 0.95rem;
+    margin-bottom: 0;
+  }
+
+  .radio-group input {
+    display: none;
+  }
+
+  .radio-group label:has(input:checked) {
+    background: white;
+    border-color: #4361ee;
+    color: #4361ee;
+    box-shadow: 0 4px 10px rgba(67, 97, 238, 0.1);
   }
 
   .checkbox-field label {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-weight: normal;
+    gap: 0.75rem;
+    font-weight: 500;
+    color: #2b2d42;
+    text-transform: none;
+    letter-spacing: normal;
+    cursor: pointer;
   }
 
   .checkbox-field input {
-    width: auto;
+    width: 20px;
+    height: 20px;
+    accent-color: #4361ee;
   }
 
   .actions {
     display: flex;
-    gap: 0.5rem;
-    margin-top: 1.5rem;
+    gap: 1rem;
+    margin-top: 2rem;
   }
 
   button {
     flex: 1;
-    padding: 0.75rem;
+    padding: 1rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 12px;
     font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .primary {
-    background-color: #007bff;
+    background: #4361ee;
     color: white;
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.25);
   }
 
   .secondary {
-    background-color: #6c757d;
-    color: white;
+    background: #edf2f4;
+    color: #8d99ae;
   }
 
   button:active {
-    opacity: 0.8;
+    transform: scale(0.98);
+    opacity: 0.9;
   }
 </style>
