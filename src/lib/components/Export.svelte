@@ -57,7 +57,7 @@
     <p>
       現在保存されているデータをCSV形式でダウンロードします。PC版システムへの取り込みに使用してください。
     </p>
-    <button class="primary" on:click={downloadCSV}
+    <button class="primary" onclick={downloadCSV}
       >{TEXTS.EXPORT.BTN_EXPORT}</button
     >
   </div>
@@ -65,7 +65,7 @@
   <div class="card warning">
     <h3>{TEXTS.EXPORT.BTN_CLEAR}</h3>
     <p>端末内の全てのデータを削除します。CSV出力後に実行してください。</p>
-    <button class="danger" on:click={handleReset}
+    <button class="danger" onclick={handleReset}
       >{TEXTS.EXPORT.BTN_CLEAR}</button
     >
   </div>

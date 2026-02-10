@@ -6,16 +6,16 @@
   import type { Transaction } from "./lib/constants/masters";
   import { TEXTS } from "./lib/constants/texts";
 
-  let currentTab = "input";
-  let editingTransaction: Transaction | null = null;
-  let listComponent: List;
-  let toastMessage = "";
-  let toastVisible = false;
+  let currentTab = $state("input");
+  let editingTransaction = $state<Transaction | null>(null);
+  let listComponent: any = $state(null);
+  let toastMessage = $state("");
+  let toastVisible = $state(false);
 
   const tabs = ["input", "list", "export"];
 
   // ダークモード管理
-  let isDarkMode = false;
+  let isDarkMode = $state(false);
 
   onMount(() => {
     // 保存されたテーマまたはシステム設定を読み込み
@@ -63,10 +63,10 @@
 
   /**
    * 編集対象の取引データをセットし、入力タブへ切り替え
-   * @param {CustomEvent<Transaction>} event
+   * @param {Transaction} tx
    */
-  function handleEdit(event: CustomEvent<Transaction>) {
-    editingTransaction = event.detail;
+  function handleEdit(tx: Transaction) {
+    editingTransaction = tx;
     currentTab = "input";
   }
 
@@ -139,13 +139,13 @@
   }
 </script>
 
-<main on:touchstart={handleTouchStart} on:touchend={handleTouchEnd}>
+<main ontouchstart={handleTouchStart} ontouchend={handleTouchEnd}>
   <header>
     <div class="header-content">
       <h1>{TEXTS.APP.TITLE}</h1>
       <button
         class="theme-toggle"
-        on:click={toggleTheme}
+        onclick={toggleTheme}
         aria-label="Toggle theme"
       >
         {#if isDarkMode}
@@ -184,15 +184,15 @@
   <nav class="tabs">
     <button
       class:active={currentTab === "input"}
-      on:click={() => switchTab("input")}>{TEXTS.APP.TABS.INPUT}</button
+      onclick={() => switchTab("input")}>{TEXTS.APP.TABS.INPUT}</button
     >
     <button
       class:active={currentTab === "list"}
-      on:click={() => switchTab("list")}>{TEXTS.APP.TABS.LIST}</button
+      onclick={() => switchTab("list")}>{TEXTS.APP.TABS.LIST}</button
     >
     <button
       class:active={currentTab === "export"}
-      on:click={() => switchTab("export")}>{TEXTS.APP.TABS.EXPORT}</button
+      onclick={() => switchTab("export")}>{TEXTS.APP.TABS.EXPORT}</button
     >
   </nav>
 
@@ -200,11 +200,11 @@
     {#if currentTab === "input"}
       <Input
         transaction={editingTransaction}
-        on:save={handleSave}
-        on:cancel={handleCancel}
+        onsave={handleSave}
+        oncancel={handleCancel}
       />
     {:else if currentTab === "list"}
-      <List bind:this={listComponent} on:edit={handleEdit} />
+      <List bind:this={listComponent} onedit={handleEdit} />
     {:else if currentTab === "export"}
       <Export />
     {/if}

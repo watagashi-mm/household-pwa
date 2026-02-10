@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
+  import { onMount } from "svelte";
   import {
     BOP_MASTER,
     CATEGORY_MASTER,
@@ -9,9 +9,9 @@
   import { getAllTransactions, deleteTransaction } from "../db/indexeddb";
   import { TEXTS } from "../constants/texts";
 
-  const dispatch = createEventDispatcher();
+  let { onedit } = $props<{ onedit: (tx: Transaction) => void }>();
 
-  let transactions: Transaction[] = [];
+  let transactions = $state<Transaction[]>([]);
 
   onMount(async () => {
     await loadTransactions();
@@ -74,7 +74,7 @@
    * @param {Transaction} tx
    */
   function handleEdit(tx: Transaction) {
-    dispatch("edit", tx);
+    if (onedit) onedit(tx);
   }
 </script>
 
@@ -105,10 +105,10 @@
             <div class="item-memo">{tx.memo}</div>
           {/if}
           <div class="item-actions">
-            <button class="edit-btn" on:click={() => handleEdit(tx)}
+            <button class="edit-btn" onclick={() => handleEdit(tx)}
               >{TEXTS.LIST.BTN_EDIT}</button
             >
-            <button class="delete-btn" on:click={() => handleDelete(tx.id)}
+            <button class="delete-btn" onclick={() => handleDelete(tx.id)}
               >{TEXTS.LIST.BTN_DELETE}</button
             >
           </div>

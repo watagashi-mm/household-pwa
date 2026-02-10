@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
+  import { onMount } from "svelte";
   import {
     BOP_MASTER,
     CATEGORY_MASTER,
@@ -9,21 +9,27 @@
   import { addTransaction, updateTransaction } from "../db/indexeddb";
   import { TEXTS } from "../constants/texts";
 
-  /** 取引データの編集対象（新規の場合はnull） */
-  export let transaction: Transaction | null = null;
+  /** Props */
+  let {
+    transaction = null,
+    onsave,
+    oncancel,
+  } = $props<{
+    transaction: Transaction | null;
+    onsave: () => void;
+    oncancel: () => void;
+  }>();
 
-  const dispatch = createEventDispatcher();
-
-  let ymd = "";
-  let bopCd = 2; // デフォルト支出
-  let catCd = 0;
-  let pmtCd = 0;
-  let amount: number | null = null;
-  let memo = "";
-  let accruedFlg = false;
+  let ymd = $state("");
+  let bopCd = $state(2); // デフォルト支出
+  let catCd = $state(0);
+  let pmtCd = $state(0);
+  let amount = $state<number | null>(null);
+  let memo = $state("");
+  let accruedFlg = $state(false);
 
   // 初期化
-  let frequentCategories: { code: number; name: string }[] = [];
+  let frequentCategories = $state<{ code: number; name: string }[]>([]);
 
   onMount(() => {
     if (transaction) {
@@ -72,21 +78,23 @@
   }
 
   // 収支区分が変わったらカテゴリと支払い方法をリセット
-  $: if (bopCd) {
-    if (!transaction || bopCd !== transaction.bopCd) {
-      // 収支区分が変わったときは直近の保存値があればそれを使う
-      const lastCat = localStorage.getItem(`lastCat_${bopCd}`);
-      const lastPmt = localStorage.getItem(`lastPmt_${bopCd}`);
+  $effect(() => {
+    if (bopCd) {
+      if (!transaction || bopCd !== transaction.bopCd) {
+        // 収支区分が変わったときは直近の保存値があればそれを使う
+        const lastCat = localStorage.getItem(`lastCat_${bopCd}`);
+        const lastPmt = localStorage.getItem(`lastPmt_${bopCd}`);
 
-      if (lastCat) catCd = parseInt(lastCat);
-      else catCd = CATEGORY_MASTER[bopCd][0]?.code || 0;
+        if (lastCat) catCd = parseInt(lastCat);
+        else catCd = CATEGORY_MASTER[bopCd][0]?.code || 0;
 
-      if (lastPmt) pmtCd = parseInt(lastPmt);
-      else pmtCd = PAYMENT_MASTER[bopCd][0]?.code || 0;
+        if (lastPmt) pmtCd = parseInt(lastPmt);
+        else pmtCd = PAYMENT_MASTER[bopCd][0]?.code || 0;
 
-      updateFrequentCategories();
+        updateFrequentCategories();
+      }
     }
-  }
+  });
 
   function resetSelectors() {
     catCd = CATEGORY_MASTER[bopCd][0]?.code || 0;
@@ -125,7 +133,7 @@
       localStorage.setItem(`catStats_${bopCd}`, JSON.stringify(stats));
     }
 
-    dispatch("save");
+    if (onsave) onsave();
     resetForm();
     updateFrequentCategories();
   }
@@ -138,7 +146,7 @@
   }
 
   function handleCancel() {
-    dispatch("cancel");
+    if (oncancel) oncancel();
   }
 </script>
 
@@ -155,7 +163,13 @@
     <div class="radio-group">
       {#each BOP_MASTER as bop}
         <label>
-          <input type="radio" name="bop" value={bop.code} bind:group={bopCd} />
+          <input
+            type="radio"
+            name="bop"
+            value={bop.code}
+            checked={bopCd === bop.code}
+            onchange={() => (bopCd = bop.code)}
+          />
           {bop.name}
         </label>
       {/each}
@@ -170,7 +184,7 @@
           <button
             class="chip"
             class:active={catCd === fcat.code}
-            on:click={() => (catCd = fcat.code)}
+            onclick={() => (catCd = fcat.code)}
           >
             {fcat.name}
           </button>
@@ -222,11 +236,11 @@
   </div>
 
   <div class="actions">
-    <button class="primary" on:click={handleSubmit}
+    <button class="primary" onclick={handleSubmit}
       >{transaction ? TEXTS.INPUT.BTN_UPDATE : TEXTS.INPUT.BTN_SUBMIT}</button
     >
     {#if transaction}
-      <button class="secondary" on:click={handleCancel}
+      <button class="secondary" onclick={handleCancel}
         >{TEXTS.INPUT.BTN_CANCEL}</button
       >
     {/if}
