@@ -1,13 +1,15 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import {
-    BOP_MASTER,
-    CATEGORY_MASTER,
-    PAYMENT_MASTER,
-    type Transaction,
-  } from "../constants/masters";
+  import { type Transaction } from "../constants/masters";
   import { getAllTransactions, deleteTransaction } from "../db/indexeddb";
   import { TEXTS } from "../constants/texts";
+  import {
+    formatDate,
+    formatAmount,
+    getBopName,
+    getCatName,
+    getPmtName,
+  } from "../utils/formatters";
 
   let { onedit } = $props<{ onedit: (tx: Transaction) => void }>();
 
@@ -20,41 +22,6 @@
   /** 取引データをDBから再読み込み */
   export async function loadTransactions() {
     transactions = await getAllTransactions();
-  }
-
-  /**
-   * 収支区分名を取得
-   * @param {number} cd
-   */
-  function getBopName(cd: number) {
-    return BOP_MASTER.find((m) => m.code === cd)?.name || "";
-  }
-
-  /**
-   * カテゴリ名を取得
-   * @param {number} bopCd
-   * @param {number} catCd
-   */
-  function getCatName(bopCd: number, catCd: number) {
-    return CATEGORY_MASTER[bopCd]?.find((m) => m.code === catCd)?.name || "";
-  }
-
-  /**
-   * 支払い方法名を取得
-   * @param {number} bopCd
-   * @param {number} pmtCd
-   */
-  function getPmtName(bopCd: number, pmtCd: number) {
-    return PAYMENT_MASTER[bopCd]?.find((m) => m.code === pmtCd)?.name || "";
-  }
-
-  /**
-   * 日付をMM/DD形式でフォーマット
-   * @param {number} ymd
-   */
-  function formatDate(ymd: number) {
-    const s = ymd.toString();
-    return `${s.substring(4, 6)}/${s.substring(6, 8)}`;
   }
 
   /**
@@ -92,7 +59,7 @@
             <span class="bop {tx.bopCd === 1 ? 'income' : 'expense'}"
               >{getBopName(tx.bopCd)}</span
             >
-            <span class="amount">¥{tx.amount.toLocaleString()}</span>
+            <span class="amount">{formatAmount(tx.amount)}</span>
           </div>
           <div class="item-body">
             <span class="category">{getCatName(tx.bopCd, tx.catCd)}</span>

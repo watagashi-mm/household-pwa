@@ -8,6 +8,7 @@
   } from "../constants/masters";
   import { addTransaction, updateTransaction } from "../db/indexeddb";
   import { TEXTS } from "../constants/texts";
+  import { settings } from "../services/settings.svelte";
 
   /** Props */
   let {
@@ -42,19 +43,20 @@
       memo = transaction.memo;
       accruedFlg = !!transaction.accruedFlg;
     } else {
-      const now = new Date();
-      ymd = now.toISOString().split("T")[0];
+      ymd = new Date().toISOString().split("T")[0];
 
-      // localStorageから直近の設定を読み込み
-      const lastBop = localStorage.getItem("lastBop");
-      const lastPmt = localStorage.getItem("lastPmt");
-      const lastCat = localStorage.getItem("lastCat");
+      // サービス経由で直近の値を復元
+      bopCd = settings.getLastValue("lastBop", 2);
+      catCd = settings.getLastValue(
+        `lastCat_${bopCd}`,
+        CATEGORY_MASTER[bopCd][0]?.code || 0,
+      );
+      pmtCd = settings.getLastValue(
+        `lastPmt_${bopCd}`,
+        PAYMENT_MASTER[bopCd][0]?.code || 0,
+      );
 
-      if (lastBop) bopCd = parseInt(lastBop);
-      if (lastPmt) pmtCd = parseInt(lastPmt);
-      if (lastCat) catCd = parseInt(lastCat);
-
-      if (!lastBop) resetSelectors();
+      if (!localStorage.getItem("lastBop")) resetSelectors();
     }
     updateFrequentCategories();
   });
@@ -79,20 +81,16 @@
 
   // 収支区分が変わったらカテゴリと支払い方法をリセット
   $effect(() => {
-    if (bopCd) {
-      if (!transaction || bopCd !== transaction.bopCd) {
-        // 収支区分が変わったときは直近の保存値があればそれを使う
-        const lastCat = localStorage.getItem(`lastCat_${bopCd}`);
-        const lastPmt = localStorage.getItem(`lastPmt_${bopCd}`);
-
-        if (lastCat) catCd = parseInt(lastCat);
-        else catCd = CATEGORY_MASTER[bopCd][0]?.code || 0;
-
-        if (lastPmt) pmtCd = parseInt(lastPmt);
-        else pmtCd = PAYMENT_MASTER[bopCd][0]?.code || 0;
-
-        updateFrequentCategories();
-      }
+    if (bopCd && (!transaction || bopCd !== transaction.bopCd)) {
+      catCd = settings.getLastValue(
+        `lastCat_${bopCd}`,
+        CATEGORY_MASTER[bopCd][0]?.code || 0,
+      );
+      pmtCd = settings.getLastValue(
+        `lastPmt_${bopCd}`,
+        PAYMENT_MASTER[bopCd][0]?.code || 0,
+      );
+      updateFrequentCategories();
     }
   });
 
@@ -122,10 +120,10 @@
       await updateTransaction(data);
     } else {
       await addTransaction(data);
-      // localStorageに直近の設定と統計を保存
-      localStorage.setItem("lastBop", bopCd.toString());
-      localStorage.setItem(`lastCat_${bopCd}`, catCd.toString());
-      localStorage.setItem(`lastPmt_${bopCd}`, pmtCd.toString());
+      // サービス経由で設定を保存
+      settings.setLastValue("lastBop", bopCd);
+      settings.setLastValue(`lastCat_${bopCd}`, catCd);
+      settings.setLastValue(`lastPmt_${bopCd}`, pmtCd);
 
       const statsStr = localStorage.getItem(`catStats_${bopCd}`) || "{}";
       const stats = JSON.parse(statsStr);

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import Input from "./lib/components/Input.svelte";
   import List from "./lib/components/List.svelte";
   import Export from "./lib/components/Export.svelte";
   import type { Transaction } from "./lib/constants/masters";
   import { TEXTS } from "./lib/constants/texts";
+  import { settings } from "./lib/services/settings.svelte";
 
   let currentTab = $state("input");
   let editingTransaction = $state<Transaction | null>(null);
@@ -14,40 +14,9 @@
 
   const tabs = ["input", "list", "export"];
 
-  // ダークモード管理
-  let isDarkMode = $state(false);
-
-  onMount(() => {
-    // 保存されたテーマまたはシステム設定を読み込み
-    const savedTheme = localStorage.getItem("theme");
-    const systemPrefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
-
-    if (savedTheme === "dark" || (!savedTheme && systemPrefersDark)) {
-      isDarkMode = true;
-      document.documentElement.classList.add("dark");
-    } else {
-      isDarkMode = false;
-      document.documentElement.classList.remove("dark");
-    }
-  });
-
-  /**
-   * テーマの切り替え
-   */
-  function toggleTheme() {
-    isDarkMode = !isDarkMode;
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      document.documentElement.classList.add("light");
-      localStorage.setItem("theme", "light");
-    }
-  }
+  // onMountはsettingsサービスが内部でテーマを初期化するため不要になる
+  // ただし、settingsサービスがonMountを内部で使っている場合は、このファイルからは削除して良い
+  // ここでは、settingsサービスがテーマ管理を完全に引き継ぐと仮定して、関連コードを削除します。
 
   /**
    * トーストメッセージを表示
@@ -145,10 +114,10 @@
       <h1>{TEXTS.APP.TITLE}</h1>
       <button
         class="theme-toggle"
-        onclick={toggleTheme}
+        onclick={() => settings.toggleTheme()}
         aria-label="Toggle theme"
       >
-        {#if isDarkMode}
+        {#if settings.isDarkMode}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
