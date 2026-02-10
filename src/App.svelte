@@ -8,7 +8,7 @@
 
   let currentTab = $state("input");
   let editingTransaction = $state<Transaction | null>(null);
-  let listComponent: any = $state(null);
+  let listComponent = $state<ReturnType<typeof List> | null>(null);
   let toastMessage = $state("");
   let toastVisible = $state(false);
 
