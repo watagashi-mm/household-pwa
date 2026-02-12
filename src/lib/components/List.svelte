@@ -15,6 +15,20 @@
 
   let transactions = $state<Transaction[]>([]);
 
+  /** 収入合計 */
+  let totalIncome = $derived(
+    transactions
+      .filter((tx) => tx.bopCd === 1)
+      .reduce((sum, tx) => sum + tx.amount, 0),
+  );
+
+  /** 支出合計 */
+  let totalExpense = $derived(
+    transactions
+      .filter((tx) => tx.bopCd === 2)
+      .reduce((sum, tx) => sum + tx.amount, 0),
+  );
+
   onMount(async () => {
     await loadTransactions();
   });
@@ -46,7 +60,19 @@
 </script>
 
 <div class="list-container">
-  <h2>{TEXTS.LIST.TITLE}</h2>
+  <div class="header-row">
+    <h2>{TEXTS.LIST.TITLE}</h2>
+    <div class="totals-summary">
+      <div class="total-item income">
+        <span class="label">{TEXTS.LIST.TOTAL_INCOME}</span>
+        <span class="value">{formatAmount(totalIncome)}</span>
+      </div>
+      <div class="total-item expense">
+        <span class="label">{TEXTS.LIST.TOTAL_EXPENSE}</span>
+        <span class="value">{formatAmount(totalExpense)}</span>
+      </div>
+    </div>
+  </div>
 
   {#if transactions.length === 0}
     <p class="empty">{TEXTS.LIST.EMPTY_MESSAGE}</p>
@@ -90,11 +116,72 @@
     padding: 0;
   }
 
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin: 0 0.5rem 1.2rem 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
   h2 {
-    margin: 0 0 1.5rem 0.5rem;
+    margin: 0;
     font-size: 1.3rem;
     font-weight: 600;
     color: var(--text-main);
+  }
+
+  .totals-summary {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .total-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px; /* バッジ風に丸く */
+    min-width: 80px;
+    border: 1px solid transparent;
+  }
+
+  .total-item .label {
+    font-size: 0.6rem;
+    font-weight: 800;
+    margin-bottom: -0.1rem;
+    opacity: 0.8;
+  }
+
+  .total-item .value {
+    font-size: 0.9rem;
+    font-weight: 800;
+  }
+
+  /* 収入バッジ: ライト/ダーク共通で視認性の良い配色 */
+  .total-item.income {
+    background: rgba(76, 201, 240, 0.15);
+    color: #0b84a5; /* 濃いめの青/シアン */
+    border-color: rgba(76, 201, 240, 0.3);
+  }
+  :global(.dark-mode) .total-item.income {
+    background: rgba(76, 201, 240, 0.2);
+    color: #4cc9f0;
+    border-color: rgba(76, 201, 240, 0.4);
+  }
+
+  /* 支出バッジ: ライト/ダーク共通で視認性の良い配色 */
+  .total-item.expense {
+    background: rgba(247, 37, 133, 0.12);
+    color: #b5175f; /* 濃いめのピンク */
+    border-color: rgba(247, 37, 133, 0.25);
+  }
+  :global(.dark-mode) .total-item.expense {
+    background: rgba(247, 37, 133, 0.2);
+    color: #ff4d9e;
+    border-color: rgba(247, 37, 133, 0.4);
   }
 
   .empty {

@@ -31,6 +31,8 @@ export const TEXTS = {
     LIST: {
         TITLE: "データ一覧",
         EMPTY_MESSAGE: "データがありません",
+        TOTAL_INCOME: "収入合計",
+        TOTAL_EXPENSE: "支出合計",
         BTN_EDIT: "編集",
         BTN_DELETE: "削除",
         CONFIRM_DELETE: "削除しますか？",
