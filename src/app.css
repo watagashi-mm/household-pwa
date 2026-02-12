@@ -55,6 +55,13 @@
   }
 }
 
+/* Explicit light mode class to override media query if needed */
+:root.light {
+  color-scheme: light;
+  --bg-main: #f8f9fa;
+  --bg-card: #ffffff;
+}
+
 body {
   margin: 0;
   display: block;

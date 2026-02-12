@@ -21,17 +21,36 @@ class AppSettings {
     }
 
     #loadSettings() {
+        const query = window.matchMedia("(prefers-color-scheme: dark)");
+
+        // 保存された設定があるか確認
         const savedTheme = localStorage.getItem("theme");
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        this.#isDarkMode = savedTheme === "dark" || (!savedTheme && prefersDark);
+
+        if (savedTheme) {
+            this.#isDarkMode = savedTheme === "dark";
+        } else {
+            // 初期値はシステム設定
+            this.#isDarkMode = query.matches;
+
+            // システム設定の変更を監視（手動設定がない場合のみ反映）
+            query.addEventListener("change", (e) => {
+                if (!localStorage.getItem("theme")) {
+                    this.#isDarkMode = e.matches;
+                    this.#applyTheme();
+                }
+            });
+        }
+
         this.#applyTheme();
     }
 
     #applyTheme() {
         if (this.#isDarkMode) {
-            document.documentElement.classList.add("dark-mode");
+            document.documentElement.classList.add("dark");
+            document.documentElement.classList.remove("light");
         } else {
-            document.documentElement.classList.remove("dark-mode");
+            document.documentElement.classList.remove("dark");
+            document.documentElement.classList.add("light");
         }
     }
 
